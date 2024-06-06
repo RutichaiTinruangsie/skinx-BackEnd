@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "$qlServerD0cker"
+    ports:
+      - "1433:1433"
+    networks:
+      - app-network
+
+  app:
+    build: .
+    environment:
+      NODE_ENV: production
+      DB_SERVER: sqlserver
+      DB_USER: sa
+      DB_PASSWORD: "$qlServerD0cker"
+      DB_NAME: SkinDB
+    depends_on:
+      - sqlserver
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
